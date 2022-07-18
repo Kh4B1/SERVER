@@ -6,17 +6,26 @@ const pool = require('../../config/database'),
   secretKey = 'Secret_Key'
 
 exports.login = (req, res) => {
-  const param = [req.body.email, req.body.pw],
-    accessToken = jwt.sign({ id: param[0] }, secretKey, { expiresIn: '1h' })
+  const param = [req.body.email, req.body.pw]
   pool((conn) => {
     const sql = 'select * from tbl_user where email = ?'
     conn.query(sql, param[0], (err, row) => {
       if (err) res.send({ result: false, message: err })
       if (row.length > 0) {
+        const accessToken = jwt.sign(
+          { email: row[0].email, email: row[0].id },
+          secretKey,
+          { expiresIn: '1h' },
+        )
         bcrypt.compare(param[1], row[0].pw, (err, result) => {
           err && res.send({ result: false, message: err })
           if (result) {
-            res.send({ result: true, token: accessToken })
+            console.log({ id: row[0].email, name: row[0].name, key: row[0].id })
+            res.send({
+              result: true,
+              token: accessToken,
+              info: { id: row[0].email, name: row[0].name, key: row[0].id },
+            })
           } else res.send({ result: false, message: 'PW ERR' })
         })
       } else res.send({ result: false, message: 'ERROR' })
@@ -27,7 +36,6 @@ exports.login = (req, res) => {
 
 exports.register = (req, res) => {
   const { email, pw, name } = req.body
-  console.log(email)
   bcrypt.hash(pw, 10, (err, hash) => {
     if (err) res.send({ result: false, message: err })
     pool((conn) => {
@@ -75,25 +83,25 @@ exports.pwreset = (req, res) => {
     if (err) res.send({ result: false, message: err })
     pool((conn) => {
       const sqlPw =
-        "update tbl_user set pw = ? where email = " +
-        conn.escape("" + email + "")
+        'update tbl_user set pw = ? where email = ' +
+        conn.escape('' + email + '')
       conn.query(sqlPw, hash, (err, row) => {
         if (err) {
-          res.send({ result: "update err" })
+          res.send({ result: 'update err' })
         }
         if (row) {
           res.send({ result: randPw })
         } else {
-          res.send({ result: "false" })
+          res.send({ result: 'false' })
         }
       })
     })
   })
 
   const transporter = nodemailer.createTransport({
-    service: "Naver",
+    service: 'Naver',
     prot: 587,
-    host: "smtp.naver.com",
+    host: 'smtp.naver.com',
     secure: false,
     requireTLS: true,
     auth: {
@@ -105,11 +113,11 @@ exports.pwreset = (req, res) => {
   const mailOptions = {
     from: emailData.user,
     to: email,
-    subject: "[ANYAD PassWord Change]",
+    subject: '[ANYAD PassWord Change]',
     text: `Your PassWord : ${randPw}`,
   }
   transporter.sendMail(mailOptions, (err, info) => {
-    if (err) res.send({ result: "sendErr" })
+    if (err) res.send({ result: 'sendErr' })
     res.send({ code: randPw })
   })
 }
