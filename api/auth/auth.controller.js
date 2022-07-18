@@ -67,3 +67,49 @@ exports.checkEmail = async (req, res) => {
     res.send({ code: checkCode })
   })
 }
+
+exports.pwreset = (req, res) => {
+  const email = req.body.email
+  const randPw = String(emailData.number())
+  bcrypt.hash(randPw, 10, (err, hash) => {
+    if (err) res.send({ result: false, message: err })
+    pool((conn) => {
+      const sqlPw =
+        "update tbl_user set pw = ? where email = " +
+        conn.escape("" + email + "")
+      conn.query(sqlPw, hash, (err, row) => {
+        if (err) {
+          res.send({ result: "update err" })
+        }
+        if (row) {
+          res.send({ result: randPw })
+        } else {
+          res.send({ result: "false" })
+        }
+      })
+    })
+  })
+
+  const transporter = nodemailer.createTransport({
+    service: "Naver",
+    prot: 587,
+    host: "smtp.naver.com",
+    secure: false,
+    requireTLS: true,
+    auth: {
+      user: emailData.user,
+      pass: emailData.pw,
+    },
+  })
+
+  const mailOptions = {
+    from: emailData.user,
+    to: email,
+    subject: "[ANYAD PassWord Change]",
+    text: `Your PassWord : ${randPw}`,
+  }
+  transporter.sendMail(mailOptions, (err, info) => {
+    if (err) res.send({ result: "sendErr" })
+    res.send({ code: randPw })
+  })
+}

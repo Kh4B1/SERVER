@@ -9,6 +9,6 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use('/api', api)
-app.get('/', jwt.check, (req, res) => res.send(`SERVER ON! PORT  : ${port}`))
+app.get('/' , (req, res) => res.send(`SERVER ON! PORT  : ${port}`))
 const port = 8000
 app.listen(port, () => console.log(`SERVER ON! PORT : ${port}`))
