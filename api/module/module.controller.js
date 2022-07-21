@@ -13,10 +13,11 @@ exports.newModule = (req, res) => {
 }
 
 exports.getModuleList = (req, res) => {
-  const { id } = req.body.user
+  const { email } = req.body.user
+
   pool((conn) => {
     const sql = 'select * from tbl_module where user_id = ?'
-    conn.query(sql, [id], (err, row) => {
+    conn.query(sql, [email], (err, row) => {
       if (err) res.send({ result: false, message: err })
       if (row) {
         res.send({ result: true, data: row })
