@@ -13,7 +13,6 @@ exports.check = (req, res, next) => {
   })
 
   p.then((decoded) => {
-    console.log(decoded)
     req.body.token = token
     req.body.user = decoded
     next()

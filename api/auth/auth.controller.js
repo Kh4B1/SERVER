@@ -13,7 +13,7 @@ exports.login = (req, res) => {
       if (err) res.send({ result: false, message: err })
       if (row.length > 0) {
         const accessToken = jwt.sign(
-          { email: row[0].email, email: row[0].id },
+          { email: row[0].email, id: row[0].id },
           secretKey,
           { expiresIn: '1h' },
         )
