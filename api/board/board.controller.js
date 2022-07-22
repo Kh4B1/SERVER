@@ -27,7 +27,7 @@ exports.getBoardList = (req, res) => {
 exports.getBoard = (req, res) => {
   const param = req.params.id
   pool((conn) => {
-    const sql = 'select * from tbl_board where b_id = ?'
+    const sql = 'select * from tbl_board where id = ?'
     conn.query(sql, param, (err, row) => {
       err && res.send({ result: false, message: err })
       res.send({ result: true, data: row })
@@ -39,7 +39,7 @@ exports.getBoard = (req, res) => {
 exports.search = (req, res) => {
   const param = req.param('keyword')
   pool((conn) => {
-    const sql = 'select * from tbl_board where b_title like %?%'
+    const sql = 'select * from tbl_board where title like %?%'
     conn.query(sql, param, (err, row) => {
       if (err) res.send({ result: false, message: err })
       row && res.send({ result: true, data: row })
