@@ -20,7 +20,7 @@ exports.login = (req, res) => {
         bcrypt.compare(param[1], row[0].pw, (err, result) => {
           err && res.send({ result: false, message: err })
           if (result) {
-            console.log({ id: row[0].email, name: row[0].name, key: row[0].id })
+            console.log(accessToken)
             res.send({
               result: true,
               token: accessToken,

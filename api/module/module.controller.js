@@ -2,7 +2,7 @@ const pool = require('../../config/database')
 
 exports.newModule = (req, res) => {
   const param = req.param('name'),
-    { id, email } = req.body.user
+    { id } = req.body.user
   pool((conn) => {
     const sql = 'insert into tbl_module(user_id, name) values(?,?)'
     conn.query(sql, [id, param], (err, doc) => {
@@ -13,11 +13,10 @@ exports.newModule = (req, res) => {
 }
 
 exports.getModuleList = (req, res) => {
-  const { email } = req.body.user
-
+  const { id } = req.body.user
   pool((conn) => {
     const sql = 'select * from tbl_module where user_id = ?'
-    conn.query(sql, [email], (err, row) => {
+    conn.query(sql, [id], (err, row) => {
       if (err) res.send({ result: false, message: err })
       if (row) {
         res.send({ result: true, data: row })
