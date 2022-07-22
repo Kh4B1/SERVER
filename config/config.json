@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "qwer1595",
+    "database": "test",
+    "host": "pino-hoo.csu91uf8yo4l.ap-northeast-2.rds.amazonaws.com",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "qwer1595",
+    "database": "oneAnyAd",
+    "host": "pino-hoo.csu91uf8yo4l.ap-northeast-2.rds.amazonaws.com",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "qwer1595",
+    "database": "oneAnyAd",
+    "host": "pino-hoo.csu91uf8yo4l.ap-northeast-2.rds.amazonaws.com",
+    "dialect": "mysql"
+  }
+}
