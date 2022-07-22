@@ -39,8 +39,8 @@ exports.getBoard = (req, res) => {
 exports.search = (req, res) => {
   const param = req.param('keyword')
   pool((conn) => {
-    const sql = 'select * from tbl_board where title like %?%'
-    conn.query(sql, param, (err, row) => {
+    const sql = `select * from tbl_board where title like "%${param}%"`
+    conn.query(sql, (err, row) => {
       if (err) res.send({ result: false, message: err })
       row && res.send({ result: true, data: row })
     })
