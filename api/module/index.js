@@ -3,7 +3,7 @@ const router = require('express').Router(),
   jwt = require('../../middlewares/jwt')
 
 router.get('/', jwt.check, modulePi.getModuleList)
-router.get('/:id', modulePi.getModule)
 router.get('/new', jwt.check, modulePi.newModule)
+router.get('/:id', modulePi.getModule)
 
 module.exports = router

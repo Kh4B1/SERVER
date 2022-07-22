@@ -1,41 +1,39 @@
 module.exports = (sequelize, DataTypes) => {
-  const Users = sequelize.define(
-    'Users',
+  const User = sequelize.define(
+    'User',
     {
       id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        type: DataTypes.INTEGER,
         primaryKey: true,
-        comment: '고유번호 UUID',
+        autoIncrement: true,
+        comment: 'PK',
       },
       email: {
-        type: DataTypes.STRING(100),
-        validate: {
-          isEmail: true,
-        },
+        type: DataTypes.STRING(255),
         comment: '이메일',
       },
-      password: {
-        type: DataTypes.STRING(60),
+      pw: {
+        type: DataTypes.STRING(255),
         comment: '비밀번호',
       },
       name: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(255),
         comment: '이름',
-      },
-      phone: {
-        type: DataTypes.STRING(72),
-        comment: '전화번호',
       },
     },
     {
       charset: 'utf8', // 한국어 설정
       collate: 'utf8_general_ci', // 한국어 설정
-      tableName: 'Users', // 테이블 이름
+      tableName: 'tbl_user', // 테이블 이름
       timestamps: true, // createAt & updateAt 활성화
       paranoid: true, // timestamps 가 활성화 되어야 사용 가능 > deleteAt 옵션 on
     },
   )
+  User.associate = (models) => {
+    User.hasMany(models.Module, { foreignKey: 'user_id', sourceKey: 'id' })
+    User.hasMany(models.Access, { foreignKey: 'user_id', sourceKey: 'id' })
+    User.hasMany(models.Board, { foreignKey: 'user_id', sourceKey: 'id' })
+  }
 
-  return Users
+  return User
 }
