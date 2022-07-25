@@ -1,42 +1,42 @@
-const pool = require('../../config/database')
+const models = require('../../models')
 
-exports.newModule = (req, res) => {
+exports.newModule = async (req, res) => {
   const param = req.param('name'),
     { id } = req.body.user
-  pool((conn) => {
-    const sql = 'insert into tbl_module(user_id, name) values(?,?)'
-    conn.query(sql, [id, param], (err, doc) => {
-      err ? res.send({ result: err, message: err }) : res.send({ result: true })
+  try {
+    const { id } = await models.Module.create({
+      name: param,
+      user_id: 1,
     })
-    conn.release()
-  })
+    for (i = 0; i < 12; i++) {
+      await models.Access.create({
+        user_id: 1,
+        module_id: id,
+      })
+    }
+    res.json({ result: true })
+  } catch (err) {
+    console.log(err)
+  }
 }
 
-exports.getModuleList = (req, res) => {
+exports.getModuleList = async (req, res) => {
   const { id } = req.body.user
-  pool((conn) => {
-    const sql = 'select * from tbl_module where user_id = ?'
-    conn.query(sql, [id], (err, row) => {
-      if (err) res.send({ result: false, message: err })
-      if (row) {
-        res.send({ result: true, data: row })
-      } else {
-        res.send({ result: false })
-      }
-    })
-    conn.release()
-  })
+  try {
+    const data = await models.Module.findAll({ where: { user_id: id } })
+    console.log(data)
+    res.json({ result: true, data: data })
+  } catch (err) {
+    console.log(err)
+  }
 }
 
-exports.getModule = (req, res) => {
+exports.getModule = async (req, res) => {
   const param = req.params.id
-  pool((conn) => {
-    const sql =
-      'select u.name as userName, m.id as moduleId, m.name as moduleName, m.user_id as moduleUserId, a.user_id as accessUserId, a.id as accessId from tbl_module as m INNER JOIN tbl_access as a on m.id = a.module_id INNER JOIN tbl_user as u on a.user_id = u.id where m.id = 1'
-    conn.query(sql, [param], (err, row) => {
-      if (err) res.send({ result: false, message: err })
-      if (row) res.send({ result: true, data: row })
-    })
-    conn.release()
-  })
+  try {
+    const data = await models.Module.findOne({ where: { id: param } })
+    res.json({ result: true, data: data })
+  } catch (err) {
+    console.log(err)
+  }
 }

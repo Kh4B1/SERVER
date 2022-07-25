@@ -3,8 +3,7 @@ const express = require('express'),
   bodyParser = require('body-parser'),
   cors = require('cors'),
   api = require('./api'),
-  { sequelize } = require('./models'),
-  models = require('./models')
+  { sequelize } = require('./models')
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -21,9 +20,5 @@ sequelize
 
 app.use('/api', api)
 app.get('/', (req, res) => res.send(`SERVER ON! PORT  : ${port}`))
-app.get('/test', async (req, res) => {
-  const data = await models.Board.findAll()
-  res.send({ result: true, data: data })
-})
 const port = 8000
 app.listen(port, () => console.log(`SERVER ON! PORT : ${port}`))

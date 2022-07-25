@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       email: {
         type: DataTypes.STRING(255),
         comment: '이메일',
+        unique: true,
       },
       pw: {
         type: DataTypes.STRING(255),
@@ -26,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       collate: 'utf8_general_ci', // 한국어 설정
       tableName: 'tbl_user', // 테이블 이름
       timestamps: true, // createAt & updateAt 활성화
-      paranoid: true, // timestamps 가 활성화 되어야 사용 가능 > deleteAt 옵션 on
+      paranoid: false, // timestamps 가 활성화 되어야 사용 가능 > deleteAt 옵션 on
     },
   )
   User.associate = (models) => {

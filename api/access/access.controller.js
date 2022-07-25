@@ -1,25 +1,21 @@
-const pool = require('../../config/database')
+const models = require('../../models')
 
-exports.getAccessList = (req, res) => {
+exports.getAccessList = async (req, res) => {
   const { id } = req.body.user
-  pool((conn) => {
-    const sql = 'select * from tbl_access where user_id = ?'
-    conn.query(sql, [id], (err, row) => {
-      if (err) res.send({ result: false, message: err })
-      if (row) res.send({ result: true, data: row })
-    })
-    conn.release()
-  })
+  try {
+    const data = await models.Access.findAll({ where: { user_id: 1 } })
+    res.json({ result: true, data: data })
+  } catch (err) {
+    console.log(err)
+  }
 }
 
-exports.getAccess = (req, res) => {
+exports.getAccess = async (req, res) => {
   const param = req.params.id
-  pool((conn) => {
-    const sql = 'select * from tbl_access where id = ?'
-    conn.query(sql, [param], (err, row) => {
-      if (err) res.send({ result: false, message: err })
-      if (row) res.send({ result: true, data: row })
-    })
-    conn.release()
-  })
+  try {
+    const data = await models.Access.findAll({ where: { id: id } })
+    res.json({ result: true, data: data })
+  } catch (err) {
+    console.log(err)
+  }
 }
