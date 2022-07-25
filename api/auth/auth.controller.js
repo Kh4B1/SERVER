@@ -5,6 +5,8 @@ const models = require('../../models'),
   nodemailer = require('nodemailer'),
   emailData = require('../../config/emailData')
 
+const upload = require('../../middlewares/multer').upload
+
 exports.register = async (req, res) => {
   const { email, pw, name } = req.body
   const hash = await bcrypt.hash(pw, 10)
@@ -103,5 +105,22 @@ exports.pwChange = async (req, res) => {
     res.json({result : true, message : "비밀번호 변경 성공"})
   }catch{
     res.json({result : false, message : "비밀번호 변경 실패"})
+  }
+}
+
+exports.upload = (req,res) => {
+  upload.array("img")
+  try{
+    req.files.map((data) =>{
+      console.log(data)
+    })
+    res.json({
+      message : "이미지 저장성공",
+      fileInfo : req.files
+    })
+  }catch{
+    res.json({
+      result : false
+    })
   }
 }
