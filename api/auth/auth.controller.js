@@ -5,6 +5,8 @@ const models = require('../../models'),
   nodemailer = require('nodemailer'),
   emailData = require('../../config/emailData')
 
+const upload = require('../../middlewares/multer').upload
+
 exports.register = async (req, res) => {
   const { email, pw, name } = req.body
   const hash = await bcrypt.hash(pw, 10)
@@ -66,7 +68,8 @@ exports.checkEmail = async (req, res) => {
 }
 
 exports.pwreset = async (req, res) => {
-  const checkCode = String(emailData.number()),
+  const email = req.body.email
+  const randPw = String(emailData.number()),
     transporter = nodemailer.createTransport({
       service: 'Naver',
       prot: 587,
@@ -84,12 +87,40 @@ exports.pwreset = async (req, res) => {
       subject: '[ANYAD PassWord Change]',
       text: `Your PassWord : ${randPw}`,
     },
-    hash = await bcrypt(checkCode, 10)
+    hash = await bcrypt.hash(randPw, 10)
   try {
-    await models.User.update({ pw: hash }, { where: { email: req.body.email } })
+    await models.User.update({ pw: hash }, { where: { email: email } })
     await transporter.sendMail(mailOptions)
-    res.json({ result: true, pw: checkCode })
+    res.json({ result: true, pw: randPw })
   } catch (err) {
     console.log(err)
+  }
+}
+
+exports.pwChange = async (req, res) => {
+  const param = [req.body.pw, req.body.user.id],
+  hash = await bcrypt.hash(param[0],10)
+  try{
+    await models.User.update({pw : hash},{where : {id : param[1]}})
+    res.json({result : true, message : "비밀번호 변경 성공"})
+  }catch{
+    res.json({result : false, message : "비밀번호 변경 실패"})
+  }
+}
+
+exports.upload = (req,res) => {
+  upload.array("img")
+  try{
+    req.files.map((data) =>{
+      console.log(data)
+    })
+    res.json({
+      message : "이미지 저장성공",
+      fileInfo : req.files
+    })
+  }catch{
+    res.json({
+      result : false
+    })
   }
 }

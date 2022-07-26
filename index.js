@@ -3,7 +3,8 @@ const express = require('express'),
   bodyParser = require('body-parser'),
   cors = require('cors'),
   api = require('./api'),
-  { sequelize } = require('./models')
+  { sequelize } = require('./models'),
+  fs = require('fs')
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -21,4 +22,12 @@ sequelize
 app.use('/api', api)
 app.get('/', (req, res) => res.send(`SERVER ON! PORT  : ${port}`))
 const port = 8000
-app.listen(port, () => console.log(`SERVER ON! PORT : ${port}`))
+app.listen(port, () => {
+  const dir = "./uploads"
+  if(!fs.existsSync(dir)){
+    fs.mkdirSync(dir)
+  }
+  console.log(`SERVER ON! PORT : ${port}`)
+})
+  
+
