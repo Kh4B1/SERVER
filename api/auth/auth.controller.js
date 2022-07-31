@@ -1,11 +1,10 @@
-const models = require('../../models'),
-  bcrypt = require('bcryptjs'),
-  jwt = require('jsonwebtoken'),
-  secretKey = 'Secret_Key',
-  nodemailer = require('nodemailer'),
-  emailData = require('../../config/emailData')
-
-const upload = require('../../middlewares/multer').upload
+const models = require("../../models"),
+  bcrypt = require("bcryptjs"),
+  jwt = require("jsonwebtoken"),
+  secretKey = "Secret_Key",
+  nodemailer = require("nodemailer"),
+  emailData = require("../../config/emailData")
+// passport = require("passport")
 
 exports.register = async (req, res) => {
   const { email, pw, name } = req.body
@@ -32,7 +31,7 @@ exports.login = async (req, res) => {
     const accessToken = jwt.sign(
       { email: user.email, id: user.id },
       secretKey,
-      { expiresIn: '1h' },
+      { expiresIn: "1h" }
     )
     res.json({ result: true, info: user, token: accessToken })
   } catch (err) {
@@ -44,9 +43,9 @@ exports.checkEmail = async (req, res) => {
   try {
     const checkCode = String(emailData.number()),
       transporter = nodemailer.createTransport({
-        service: 'Naver',
+        service: "Naver",
         prot: 587,
-        host: 'smtp.naver.com',
+        host: "smtp.naver.com",
         secure: false,
         requireTLS: true,
         auth: {
@@ -57,7 +56,7 @@ exports.checkEmail = async (req, res) => {
       mailOptions = {
         from: emailData.user,
         to: req.body.email,
-        subject: '[ANYAD Sign Up Check Code]',
+        subject: "[ANYAD Sign Up Check Code]",
         text: `Your Code : ${checkCode}`,
       }
     await transporter.sendMail(mailOptions)
@@ -71,9 +70,9 @@ exports.pwreset = async (req, res) => {
   const email = req.body.email
   const randPw = String(emailData.number()),
     transporter = nodemailer.createTransport({
-      service: 'Naver',
+      service: "Naver",
       prot: 587,
-      host: 'smtp.naver.com',
+      host: "smtp.naver.com",
       secure: false,
       requireTLS: true,
       auth: {
@@ -84,7 +83,7 @@ exports.pwreset = async (req, res) => {
     mailOptions = {
       from: emailData.user,
       to: email,
-      subject: '[ANYAD PassWord Change]',
+      subject: "[ANYAD PassWord Change]",
       text: `Your PassWord : ${randPw}`,
     },
     hash = await bcrypt.hash(randPw, 10)
@@ -99,28 +98,37 @@ exports.pwreset = async (req, res) => {
 
 exports.pwChange = async (req, res) => {
   const param = [req.body.pw, req.body.user.id],
-  hash = await bcrypt.hash(param[0],10)
-  try{
-    await models.User.update({pw : hash},{where : {id : param[1]}})
-    res.json({result : true, message : "비밀번호 변경 성공"})
-  }catch{
-    res.json({result : false, message : "비밀번호 변경 실패"})
+    hash = await bcrypt.hash(param[0], 10)
+  try {
+    await models.User.update({ pw: hash }, { where: { id: param[1] } })
+    res.json({ result: true, message: "비밀번호 변경 성공" })
+  } catch {
+    res.json({ result: false, message: "비밀번호 변경 실패" })
   }
 }
 
-exports.upload = (req,res) => {
-  upload.array("img")
-  try{
-    req.files.map((data) =>{
-      console.log(data)
-    })
-    res.json({
-      message : "이미지 저장성공",
-      fileInfo : req.files
-    })
-  }catch{
-    res.json({
-      result : false
-    })
-  }
-}
+// exports.passportLogin = (req, res, next) => {
+//   passport.authenticate("local", (authError, user, info) => {
+//     if (authError) {
+//       console.error(authError)
+//       return next(authError)
+//     }
+
+//     if (!user) {
+//       return res.redirect(`/?loginError=${info.message}`)
+//     }
+
+//     return req.login(user, (loginError) => {
+//       if (loginError) {
+//         console.error(loginError)
+//         return next(loginError)
+//       }
+//       const accessToken = jwt.sign(
+//         { email: user.email, id: user.id },
+//         secretKey,
+//         { expiresIn: "1h" }
+//       )
+//       res.json({ result: true, info: user, token: accessToken })
+//     })
+//   })(req, res, next)
+// }

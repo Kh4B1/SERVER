@@ -1,4 +1,4 @@
-const models = require('../../models')
+const models = require("../../models")
 
 exports.getBoardList = async (req, res) => {
   try {
@@ -22,7 +22,6 @@ exports.getBoard = async (req, res) => {
 
 exports.searchBoard = async (req, res) => {
   const { keyword } = req.query
-
   try {
     const data = await models.Board.findAll({ where: { title: keyword } })
     data ? res.json({ result: true, data: data }) : res.json({ result: false })
