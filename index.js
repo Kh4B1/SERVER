@@ -10,6 +10,7 @@ const express = require("express"),
 
 // passportConfig()
 app.use(cors())
+app.use("/source", express.static("source"))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 // app.use(cookieParser("KEYKEY"))
@@ -25,6 +26,7 @@ sequelize
   })
 
 app.use("/api", api)
+
 app.get("/", (req, res) => res.send(`SERVER ON! PORT  : ${port}`))
 const port = 8000
 app.listen(port, () => {

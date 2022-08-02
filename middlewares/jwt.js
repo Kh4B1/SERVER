@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken'),
-  secretKey = 'Secret_Key'
+const jwt = require("jsonwebtoken"),
+  secretKey = "Secret_Key"
 
 exports.check = (req, res, next) => {
   const token = req.headers.accesstoken

@@ -1,4 +1,5 @@
-const models = require("../../models")
+const models = require("../../models"),
+  { Op } = require("sequelize")
 
 exports.getBoardList = async (req, res) => {
   try {
@@ -11,7 +12,6 @@ exports.getBoardList = async (req, res) => {
 
 exports.getBoard = async (req, res) => {
   const { id } = req.params
-  console.log(id)
   try {
     const data = await models.Board.findOne({ where: { id: id } })
     data ? res.json({ result: true, data: data }) : res.json({ result: false })
@@ -23,7 +23,11 @@ exports.getBoard = async (req, res) => {
 exports.searchBoard = async (req, res) => {
   const { keyword } = req.query
   try {
-    const data = await models.Board.findAll({ where: { title: keyword } })
+    const data = await models.Board.findAll({
+      where: {
+        [Op.substring]: keyword,
+      },
+    })
     data ? res.json({ result: true, data: data }) : res.json({ result: false })
   } catch (err) {
     console.log(err)
@@ -32,15 +36,17 @@ exports.searchBoard = async (req, res) => {
 
 exports.newBoard = async (req, res) => {
   const { id } = req.body.user,
-    mid = req.params.id
-  const { title, text, price } = req.body
+    { title, text, price } = req.body,
+    { filename } = req.file,
+    { id: mId } = req.params
   try {
     await models.Board.create({
       title: title,
-      text: text,
+      content: text,
       price: price,
       user_id: id,
-      module_id: mid,
+      module_id: mId,
+      image: filename,
     })
     res.json({ result: true })
   } catch (err) {

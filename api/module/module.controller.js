@@ -1,16 +1,16 @@
-const models = require('../../models')
+const models = require("../../models")
 
 exports.newModule = async (req, res) => {
-  const param = req.param('name'),
-    { id } = req.body.user
+  const param = req.param("name"),
+    { id: uid } = req.body.user
   try {
     const { id } = await models.Module.create({
       name: param,
-      user_id: 1,
+      user_id: uid,
     })
     for (i = 0; i < 12; i++) {
       await models.Access.create({
-        user_id: 1,
+        user_id: uid,
         module_id: id,
       })
     }

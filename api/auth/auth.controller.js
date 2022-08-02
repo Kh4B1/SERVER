@@ -7,8 +7,8 @@ const models = require("../../models"),
 // passport = require("passport")
 
 exports.register = async (req, res) => {
-  const { email, pw, name } = req.body
-  const hash = await bcrypt.hash(pw, 10)
+  const { email, pw, name } = req.body,
+    hash = await bcrypt.hash(pw, 10)
   try {
     await models.User.create({
       email: email,

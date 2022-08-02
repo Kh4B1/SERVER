@@ -1,33 +1,22 @@
 const multer = require("multer"),
-  path = require("path"),
-  fileFilter = (req, file, cb) => {
-    if (
-      file.mimetype === "image/png" ||
-      file.mimetype === "image/jpg" ||
-      file.mimetype === "image/jpeg"
-    ) {
-      cb(null, true)
-    } else {
-      req.fileValidationError =
-        "jpg,jpeg,png,gif,webp 파일만 업로드 가능합니다."
-      cb(null, false)
-    }
-  },
-  upload = multer({
-    storage: multer.diskStorage({
-      //폴더위치 지정
-      destination: (req, file, done) => {
-        done(null, "./uploads")
-      },
-      filename: (req, file, done) => {
-        const ext = path.extname(file.originalname)
-        // aaa.txt => aaa+&&+129371271654.txt
-        const fileName = Date.now() + ext
-        done(null, fileName)
-      },
-    }),
-    fileFilter: fileFilter,
-    limits: { fileSize: 30 * 1024 * 1024 },
-  })
+  randomNumber = require("../config/emailData").number(),
+  storageVideo = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "source/video/") // cb 콜백함수를 통해 전송된 파일 저장 디렉토리 설정
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${randomNumber}-${Date.now()}.mp4`) // cb 콜백함수를 통해 전송된 파일 이름 설정
+    },
+  }),
+  uploadVideo = multer({ storage: storageVideo }),
+  storageImg = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "source/images/") // cb 콜백함수를 통해 전송된 파일 저장 디렉토리 설정
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${randomNumber}-${Date.now()}.jpeg`) // cb 콜백함수를 통해 전송된 파일 이름 설정
+    },
+  }),
+  uploadImg = multer({ storage: storageImg })
 
-module.exports = { upload }
+module.exports = { uploadVideo, uploadImg }
