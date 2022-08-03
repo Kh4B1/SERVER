@@ -22,10 +22,13 @@ exports.getBoard = async (req, res) => {
 
 exports.searchBoard = async (req, res) => {
   const { keyword } = req.query
+  console.log(keyword)
   try {
     const data = await models.Board.findAll({
       where: {
-        [Op.substring]: keyword,
+        title: {
+          [Op.substring]: keyword,
+        },
       },
     })
     data ? res.json({ result: true, data: data }) : res.json({ result: false })
